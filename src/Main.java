@@ -56,11 +56,14 @@ public class Main {
                         sumOfSalaries += salaries[i];
                     }
                     System.out.println("\nEmployee salaries after tax");
-                    for (int i = 0; i < nrOfEmployees; i++) {
-                        System.out.println("Employee " + (i + 1) + ": " + (salaries[i] * 0.7));
+                    int j = 1;
+                    for (double salary : salaries) {
+                        System.out.println("Employee " + j + ": " + (salary * 0.7));
+                        j++;
                     }
                     System.out.println("Total: " + sumOfSalaries);
                     //System.out.println("Pay employee salaries?");
+
                     if (sumOfSalaries > balance) {
                         System.out.println("Insufficient funds. Salaries not payed.");
 
