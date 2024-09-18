@@ -59,7 +59,7 @@ public class Main {
                     System.out.println("Input the salary for each employee");
                     for (int i = 0; i < nrOfEmployees; i++) {
                         System.out.print("Employee " + (i + 1) + ": ");
-                        salaries[i] = userInputPosDouble("Input must be a positive number.\nEmployee"+ i +": ");
+                        salaries[i] = userInputPosDouble("Input must be a positive number.\nEmployee"+ (i+1) +": ");
                         netSumSalaries += salaries[i]*0.7;
                     }
 
@@ -73,7 +73,9 @@ public class Main {
                     System.out.println("Total (after tax): " + netSumSalaries);
 
                     //ask user if they want to pay the salaries (not specified in Assigment description, but option is called "Betala ut löner" so it is implied)
-                    System.out.print("\nPay employee salaries (Y/N)? :");
+                    accountBalance = makePayment(accountBalance,netSumSalaries,"salaries");
+
+                    /*System.out.print("\nPay employee salaries (Y/N)? :");
                     if (userInputYesNo()) {
                         if ((netSumSalaries) > accountBalance) {
                             System.out.println("Insufficient funds. Salaries not payed.");
@@ -83,7 +85,7 @@ public class Main {
                         }
                     } else {
                         System.out.println("Salaries not payed.");
-                    }
+                    }*/
                     break;
 
                 case 2:
@@ -119,14 +121,15 @@ public class Main {
                     System.out.println("Input the amount of each invoice");
                     for (int i = 0; i < nrOfInvoices; i++) {
                         System.out.print("Invoice " + (i + 1) + ": ");
-                        costIncomingInvoice = userInputPosDouble("Input must be a positive number.\nInvoice "+ i +": ");
+                        costIncomingInvoice = userInputPosDouble("Input must be a positive number.\nInvoice "+ (i +1) +": ");
                         netSumInvoices += costIncomingInvoice * 0.8;
                     }
 
                     System.out.println("Sum of invoices to be payed after VAT deduction: " + netSumInvoices);
 
                     //ask user if they want to the specified amount (i.e., cost of all invoices w/o VAT)
-                    System.out.print("\nPay invoices (Y/N)? :");
+                    accountBalance = makePayment(accountBalance,netSumInvoices,"invoices");
+                    /*System.out.print("\nPay invoices (Y/N)? :");
                     if (userInputYesNo()) {
 
                         //check if account balance is sufficient to pay the invoices
@@ -138,7 +141,7 @@ public class Main {
                         }
                     } else {
                         System.out.println("Invoices not payed.");
-                    }
+                    }*/
                     break;
 
                 case -1:
@@ -244,13 +247,13 @@ public class Main {
         if (userInputYesNo()) {
             //check if account balance is sufficient to pay the invoices
             if (cost > accountBalance) {
-                System.out.println("Insufficient funds. " + costType + " not payed.");
+                System.out.println("Payment could not be made due to insuffient funds.\nCurrent account balance: " + accountBalance);
             } else {
                 accountBalance -= cost;
-                System.out.println("\n" + costType + " payed. \nNew account balance: " + accountBalance);
+                System.out.println("Payment made. New account balance: " + accountBalance);
             }
         } else {
-            System.out.println(costType + " not payed.");
+            System.out.println("No payment made. Current account balance: " + accountBalance);
         }
         return accountBalance;
     }
