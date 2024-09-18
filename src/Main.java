@@ -1,39 +1,39 @@
-//T.Lind, 2024Sep18
+//T.Lind, Sep2024
 
-//import scanner for user input
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
 
-        //create scanner for receiving user input
+        /*General note: all user input is passed via methods (located below main method) which catch invalid
+        user input and loops until the user provides a valid input for the current prompt*/
+
+        //scanner for receiving user input
         Scanner sc = new Scanner(System.in);
-
-        //declare choice and check variables
-        //will be assigned value via user input later, but need to be initiated here for while conditions in do-while loops
-        //data type int, since user instructed in to input whole numbers
-        int choice;
-
-        //initialize balance variable, starting account balance is 0 for this program
-        //data type double, since account balance will be subject operations resulting in decimal numbers
-        double balance = 0;
+        //variable for account balance, starts at zero but can be changed at program start-up
+        double accountBalance = 0;
 
         //greet user and inform of current account balance
         System.out.println("Welcome to the program for invoice and salary management!");
-        System.out.println("\nThe current account balance is: "+balance);
+        System.out.println("\nThe current account balance is: "+ accountBalance);
 
         //allow user to change the account balance if erroneous
         System.out.print("Is balance correct (Y/N)?: ");
 
         if (!userInputYesNo()) {
             System.out.print("Input correct balance: ");
-            //CHECK DOUBLE (also can close scanner when all input is via method
-            balance = userInputPosDouble("Input must be a positive number. Try again: ");
-            System.out.println("Account balance changed to: " + balance);
+            accountBalance = userInputPosDouble("Input must be a positive number. Try again: ");
+            System.out.println("Account balance changed to: " + accountBalance);
         }
 
-        //do while, or try while -> give feedback on non-valid answer
+        /*main menu and the different actions within are incapsulated in a do-while loop to keep
+        the program running (and return the user to main menu after an action (e.g., paying salaries)
+        is complete)*/
+
+        //variable for holding user input in main menu
+        int choice;
+
         do {
             System.out.println("\nMAIN MENU");
             System.out.println("1. Pay employee salaries (press 1)");
@@ -41,71 +41,103 @@ public class Main {
             System.out.println("3. Pay invoices (press 3)");
             System.out.print("Choose option (or press -1 to exit program): ");
 
+            //run the correct menu option (according to user input) using a switch expression
             choice = userInputMenu();
             switch (choice) {
+
                 case 1:
+                    //confirm the user choice via print statement and ask for nr of employees
                     System.out.println("\nPAY EMPLOYEE SALARIES");
                     System.out.print("Input number of employees: ");
                     int nrOfEmployees = userInputPosInt();
+                    //create a list to hold employee salaries
                     double[] salaries = new double[nrOfEmployees];
-                    double sumOfSalaries = 0;
+                    //variable for holding sum of all salaries after tax(-30%) in the list
+                    double netSumSalaries = 0;
+
+                    //loop the list and store salaries (from user input)
                     System.out.println("Input the salary for each employee");
                     for (int i = 0; i < nrOfEmployees; i++) {
                         System.out.print("Employee " + (i + 1) + ": ");
                         salaries[i] = userInputPosDouble("Input must be a positive number.\nEmployee"+ i +": ");
-                        sumOfSalaries += salaries[i];
+                        netSumSalaries += salaries[i]*0.7;
                     }
+
+                    //print employee salaries after tax and print total sum (after tax)
                     System.out.println("\nEmployee salaries after tax");
                     int j = 1;
                     for (double salary : salaries) {
                         System.out.println("Employee " + j + ": " + (salary * 0.7));
                         j++;
                     }
-                    System.out.println("Total: " + sumOfSalaries);
-                    //System.out.println("Pay employee salaries?");
+                    System.out.println("Total (after tax): " + netSumSalaries);
 
-                    if (sumOfSalaries > balance) {
-                        System.out.println("Insufficient funds. Salaries not payed.");
-
+                    //ask user if they want to pay the salaries (not specified in Assigment description, but option is called "Betala ut löner" so it is implied)
+                    System.out.print("\nPay employee salaries (Y/N)? :");
+                    if (userInputYesNo()) {
+                        if ((netSumSalaries) > accountBalance) {
+                            System.out.println("Insufficient funds. Salaries not payed.");
+                        } else {
+                            accountBalance -= netSumSalaries;
+                            System.out.println("\nSalaries payed. \nNew account balance: " + accountBalance);
+                        }
                     } else {
-                        balance -= sumOfSalaries;
-                        System.out.println("\nSalaries payed. \nNew account balance: " + balance);
+                        System.out.println("Salaries not payed.");
                     }
                     break;
 
                 case 2:
+                    //confirm the user choice via print statement and ask for the invoice amount
                     System.out.println("\nCREATE NEW INVOICE");
-                    System.out.print("Input the sum of new invoice: ");
+                    System.out.print("Input the cost to be invoiced: ");
                     double costOutgoingInvoice = userInputPosDouble("Input must be a positive number.\nTry again: ");
-                    double vat = costOutgoingInvoice * 0.20;
-                    balance += (costOutgoingInvoice - vat);
 
+                    //store the VAT tax in a separate variable
+                    double vat = costOutgoingInvoice * 0.20;
+                    //add the invoiced amount (w/o VAT) to the account balance
+                    accountBalance += (costOutgoingInvoice - vat);
+
+                    //inform user of details of the created invoice and the new account balance
                     System.out.println("\nTotal: " + costOutgoingInvoice);
                     System.out.println("VAT: " + vat);
-                    System.out.println("Before VAT: " + (costOutgoingInvoice - vat));
-                    System.out.println("\nInvoice created successfully.\nNew account balance: " + balance);
+                    System.out.println("Total after VAT deduction: " + (costOutgoingInvoice - vat));
+                    System.out.println("\nInvoice created successfully.\nNew account balance: " + accountBalance);
                     break;
 
                 case 3:
+                    //confirm the user choice via print statement and ask for nr of invoices to be payed
                     System.out.println("\nPAY INVOICES");
                     System.out.println("Input the number of invoices to be payed: ");
                     int nrOfInvoices = userInputPosInt();
-                    double sumOfInvoices = 0;
+                    //variable for storing user input
+                    //NB! not stored in a list, since we only need the sum of all invoices and individual invoice amounts will not be used by the program again
                     double costIncomingInvoice;
+                    //variable for holding sum (with VAT tax deducted) of all invoices
+                    double netSumInvoices = 0;
+
+                    //ask for invoice amounts
                     System.out.println("Input the amount of each invoice");
                     for (int i = 0; i < nrOfInvoices; i++) {
                         System.out.print("Invoice " + (i + 1) + ": ");
                         costIncomingInvoice = userInputPosDouble("Input must be a positive number.\nInvoice "+ i +": ");
-                        sumOfInvoices += costIncomingInvoice * 0.8;
+                        netSumInvoices += costIncomingInvoice * 0.8;
                     }
-                    System.out.println("Sum of invoices to be payed (w/o VAT): " + sumOfInvoices);
 
-                    if (sumOfInvoices > balance) {
-                        System.out.println("Insufficient funds. Invoices not payed.");
+                    System.out.println("Sum of invoices to be payed after VAT deduction: " + netSumInvoices);
 
+                    //ask user if they want to the specified amount (i.e., cost of all invoices w/o VAT)
+                    System.out.print("\nPay invoices (Y/N)? :");
+                    if (userInputYesNo()) {
+
+                        //check if account balance is sufficient to pay the invoices
+                        if (netSumInvoices > accountBalance) {
+                            System.out.println("Insufficient funds. Invoices not payed.");
+                        } else {
+                            accountBalance -= netSumInvoices;
+                            System.out.println("\nInvoices payed. \nNew account balance: " + accountBalance);
+                        }
                     } else {
-                        balance -= sumOfInvoices;
-                        System.out.println("\nInvoices payed. \nNew account balance: " + balance);
+                        System.out.println("Invoices not payed.");
                     }
                     break;
 
@@ -188,7 +220,7 @@ public class Main {
         return inputInt;
     }
 
-    static double userInputPosDouble(String s) {
+    static double userInputPosDouble(String userErrorMessage) {
         double inputDouble;
         Scanner sc = new Scanner(System.in);
         while (true) {
@@ -197,14 +229,30 @@ public class Main {
                 if (inputDouble >= 0) {
                     break;
                 } else {
-                    System.out.print(s);
+                    System.out.print(userErrorMessage);
                 }
             } catch (InputMismatchException e) {
-                System.out.print(s);
+                System.out.print(userErrorMessage);
                 sc.nextLine();
             }
         }
         return inputDouble;
+    }
+
+    static double makePayment(double accountBalance, double cost, String costType) {
+        System.out.print("\nPay "+ costType +" (Y/N)?: ");
+        if (userInputYesNo()) {
+            //check if account balance is sufficient to pay the invoices
+            if (cost > accountBalance) {
+                System.out.println("Insufficient funds. " + costType + " not payed.");
+            } else {
+                accountBalance -= cost;
+                System.out.println("\n" + costType + " payed. \nNew account balance: " + accountBalance);
+            }
+        } else {
+            System.out.println(costType + " not payed.");
+        }
+        return accountBalance;
     }
 
 }
