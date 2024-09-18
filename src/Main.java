@@ -72,7 +72,7 @@ public class Main {
                     }
                     System.out.println("Total (after tax): " + netSumSalaries);
 
-                    //ask user if they want to pay the salaries (not specified in Assigment description, but option is called "Betala ut löner" so it is implied)
+                    //ask user if they want to pay salaries (not specified in Assigment description, but option is called "Betala ut löner" so it is implied)
                     accountBalance = makePayment(accountBalance,netSumSalaries,"salaries");
 
                     /*System.out.print("\nPay employee salaries (Y/N)? :");
@@ -124,10 +124,9 @@ public class Main {
                         costIncomingInvoice = userInputPosDouble("Input must be a positive number.\nInvoice "+ (i +1) +": ");
                         netSumInvoices += costIncomingInvoice * 0.8;
                     }
-
                     System.out.println("Sum of invoices to be payed after VAT deduction: " + netSumInvoices);
 
-                    //ask user if they want to the specified amount (i.e., cost of all invoices w/o VAT)
+                    //ask user if they want to pay invoices
                     accountBalance = makePayment(accountBalance,netSumInvoices,"invoices");
                     /*System.out.print("\nPay invoices (Y/N)? :");
                     if (userInputYesNo()) {
@@ -145,14 +144,18 @@ public class Main {
                     break;
 
                 case -1:
+                    //confirm via print statement that the program has been terminated
                     System.out.println("\nProgram terminated");
                     break;
 
                 default:
+                    //if user input is not -1, 1, 2 or 3 the user is asked for new input
+                    //(should not be able to happen due to the userInoutMenu() method, but added here just in case
                     System.out.println("Input a number between 1-3 or press -1 to exit program: ");
                     choice = userInputMenu();
             }
 
+            //ask user if they want to return to main menu after completed action (e.g., pay salaries)
             if (choice != -1) {
                 System.out.print("\nPress 1 to return to main menu or press -1 to exit program: ");
                 int input = userInputMenu();
