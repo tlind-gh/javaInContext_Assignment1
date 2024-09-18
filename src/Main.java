@@ -64,7 +64,7 @@ public class Main {
                     for (int i = 0; i < nrOfEmployees; i++) {
                         System.out.print("Employee " + (i + 1) + ": ");
                         //method only allowing numbers >= 0
-                        salaries[i] = userInputPosDouble("Input must be a positive number.\nEmployee"+ (i+1) +": ");
+                        salaries[i] = userInputPosDouble("Input must be a positive number.\nEmployee "+ (i+1) +": ");
                         netSumSalaries += salaries[i]*0.7;
                     }
 
